@@ -53,16 +53,18 @@ const userSchema = new mongoose.Schema(
         },
 
     }, { timestamps: true })
-
+// i want to hash the password before saving it to the database but only modified the password or nothing it 
 userSchema.pre("save", async function (next) {
     if (!this.isModified("password")) return next();
     this.password = bcrypt.hash(this.password, 10);
     next();
 })
+// check the password is correct or not
 userSchema.methods.isPasswordCorrect = async function (password) {
     return await bcrypt.compare(password, this.password);
 
 }
+// genrate access token and refresh token
 userSchema.methods.genrateAcessToken = function () {
     return jwt.sign(
         {
@@ -76,8 +78,8 @@ userSchema.methods.genrateAcessToken = function () {
     )
 
 }
-userSchema.methods.genrateRefreshToken = function () { 
-     return jwt.sign(
+userSchema.methods.genrateRefreshToken = function () {
+    return jwt.sign(
         {
             _id: this._id,
             email: this.email,
@@ -85,8 +87,8 @@ userSchema.methods.genrateRefreshToken = function () {
             fullName: this.fullName
         },
         process.env.REFRESH_TOKEN_SECRET,
-        { 
-            expiresIn: process.env.REFRESH_TOKEN_EXPIRY 
+        {
+            expiresIn: process.env.REFRESH_TOKEN_EXPIRY
         }
     )
 }
