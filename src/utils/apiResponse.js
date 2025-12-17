@@ -1,6 +1,7 @@
 class apiResponse{
     constructor(stausCode,
-        data,message="success"
+        data,
+        message="success"
     )
     {
         this.stausCode=stausCode;

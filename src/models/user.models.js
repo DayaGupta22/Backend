@@ -54,11 +54,18 @@ const userSchema = new mongoose.Schema(
 
     }, { timestamps: true })
 // i want to hash the password before saving it to the database but only modified the password or nothing it 
-userSchema.pre("save", async function (next) {
-    if (!this.isModified("password")) return next();
-    this.password =await bcrypt.hash(this.password, 10);
-    next();
-})
+// userSchema.pre("save", async function (next) {
+//     if (!this.isModified("password")) return next();
+//     this.password = await bcrypt.hash(this.password, 10);
+//     next();
+// })
+
+
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
+  this.password = await bcrypt.hash(this.password, 10);
+});
+
 // check the password is correct or not
 userSchema.methods.isPasswordCorrect = async function (password) {
     return await bcrypt.compare(password, this.password);

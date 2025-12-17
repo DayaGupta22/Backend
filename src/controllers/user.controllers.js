@@ -1,6 +1,6 @@
 import { User } from "../models/user.models.js";
 import { apiError } from "../utils/apiError.js";
-import { asyncHandler } from "../utils/aysncHandler.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 import { apiResponse } from "../utils/apiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 const registerUser = asyncHandler(async (req, res) => {
@@ -15,31 +15,37 @@ const registerUser = asyncHandler(async (req, res) => {
     // return response
 
     const { username, fullName, email, password } = req.body;
-    console.log("username", req.body);
+    // console.log( req.body);
 
     if ([username, fullName, email, password].some((field) => field?.trim() === "")) {
-        throw new apiError(400, "All fields are required")
+        throw new apiError(400, "All fields are required") // this apiError are handles the error where it is used
     }
-    const existedUser = User.findOne({
+    const existedUser =await User.findOne({
         $or: [{ username }, { email }]
     })
     if (existedUser) {
         throw new apiError(409, "User already exists with this username or email")
     }
+    // console.log("req.files data", req.files);
     const avatarLocalpath = req.files?.avatar[0]?.path;
-    const coverImagelocalpath = req.files?.coverImage[0]?.path;
-    if (!avatarLocalpath || !coverImagelocalpath) {
+     let  coverImagelocalpath ;
+    if(req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length>0){
+    coverImageLocalPath = req.files.coverImage[0].path;
+}
+    if (!avatarLocalpath ) {
         throw new apiError(400, "Avatar and cover image are required")
     }
     const avatar = await uploadOnCloudinary(avatarLocalpath);
     const coverImage = await uploadOnCloudinary(coverImagelocalpath);
+    // console.log("cover image upload response", coverImage);
+    // console.log("avatar upload response", avatar);
     if (!avatar) {
         throw new apiError(500, "Error while uploading avatar image")
     }
     const user = await User.create({
         username: username.toLowerCase(),
         fullName,
-        avatar: avatar.url,
+        avatar: avatar.url ,
         coverImage: coverImage?.url || " ",
         email,
         password
