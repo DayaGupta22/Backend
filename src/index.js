@@ -1,30 +1,12 @@
 
-// import connectDB from "./db/database.js";
-// import express from 'express';
-// import app from "./app.js";
-
-// import dotenv from "dotenv";
-
-// dotenv.config({
-//     path :'./env'
-// });
-// const app = express();
-// await connectDB();
-
-// app.get('/',(req,res)=>{
-//     res.send ("COnnection established with server ")
-//  })
-// app.listen(process.env.PORT,()=>{
-//     console.log (`server is running on port ${process.env.PORT}`);
-//  })
-
-
 import dotenv from "dotenv"
 import connectDB from "./db/database.js";
 import {app} from './app.js'
+
 dotenv.config({
     path: './.env'
 })
+
 
 await connectDB()
 .then(() => {
@@ -36,6 +18,21 @@ await connectDB()
     console.log("MONGO db connection failed !!! ", err);
 })
 
+
+// import dotenv from "dotenv";
+// import connectDB from "./db/database.js";
+// import { app } from "./app.js";
+
+// dotenv.config();
+
+// try {
+//   await connectDB();
+//   app.listen(process.env.PORT || 8000, () => {
+//     console.log(`⚙️ Server is running at port : ${process.env.PORT}`);
+//   });
+// } catch (err) {
+//   console.error("MONGO db connection failed !!! ", err);
+// }
 
 
 

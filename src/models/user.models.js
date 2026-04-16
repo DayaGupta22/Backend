@@ -19,6 +19,11 @@ const userSchema = new mongoose.Schema(
             trim: true,
 
         },
+        role: {
+            type: String,
+            enum: ["USER", "ADMIN"],
+            default: "USER"
+        },
 
         fullName: {
             type: String,
@@ -62,8 +67,8 @@ const userSchema = new mongoose.Schema(
 
 
 userSchema.pre("save", async function () {
-  if (!this.isModified("password")) return;
-  this.password = await bcrypt.hash(this.password, 10);
+    if (!this.isModified("password")) return;
+    this.password = await bcrypt.hash(this.password, 10);
 });
 
 // check the password is correct or not
